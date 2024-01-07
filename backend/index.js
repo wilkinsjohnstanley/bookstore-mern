@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import { PORT, mongoDBURL } from './config.js'
 import mongoose from 'mongoose';
 import { Book } from './models/bookModel.js';
@@ -9,21 +9,21 @@ const app = express();
 app.use(express.json());
 
 // be careful not to use backslash, use forward slash!!
-app.get('/', (request, response)=> {
-   console.log(request) 
-   return response.status(234).send('Hi mom');
-});
+app.get('/', (request, response) => {
+    console.log(request);
+    return response.status(234).send('Welcome To MERN Stack Tutorial');
+  });
 
 
 //Route for Save a red Book
-app.post('/books', async(request, response)=>{
-    try{
+app.post('/books', async (request, response)=>{
+    try {
         if (
             !request.body.title ||
             !request.body.author ||
             !request.body.publishYear
         ){
-        return response.status(400).setDefaultEncoding({
+        return response.status(400).send({
             message:'Send all required fields: title, author, publishYear',
         });
         }
@@ -37,6 +37,18 @@ app.post('/books', async(request, response)=>{
         return response.status(201).send(book);
     }catch(error){
         console.log(error.message);
+        response.status(500).send({message: error.message});
+    }
+});
+
+//Route for Get All Books from database
+app.get('/books', async(request, response)=>{
+    try{
+        const books = await Book.find({});
+
+        return response.status(200).json(books);
+    }catch(error){
+        console.log(error.message);
         response.status(500).send({message:error.message});
     }
 });
@@ -44,16 +56,15 @@ app.post('/books', async(request, response)=>{
 
 
 
-//be sur you change directory before npm run dev
-mongoose 
-    .connect(mongoDBURL)
-        .then(()=> {
-            console.log('App is connected to the datebase');
-            app.listen(PORT, ()=>{
-                //don't confuse `` for ''
-                console.log(`App is listening to port: ${PORT}`);
-            });
-        })
-        .catch((error)=>{
-            console.log(error);
-        });
+//be sure you change directory before npm run dev
+mongoose
+  .connect(mongoDBURL)
+  .then(() => {
+    console.log('App connected to database');
+    app.listen(PORT, () => {
+      console.log(`App is listening to port: ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
