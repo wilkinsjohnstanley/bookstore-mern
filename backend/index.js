@@ -1,10 +1,12 @@
 import express from "express";
-import { PORT, mongoDBURL } from "./config.js";
+import { PORT, mongoDBURL } from './config.js'
 import mongoose from 'mongoose';
 import { Book } from './models/bookModel.js';
 
 
 const app = express();
+
+app.use(express.json());
 
 // be careful not to use backslash, use forward slash!!
 app.get('/', (request, response)=> {
